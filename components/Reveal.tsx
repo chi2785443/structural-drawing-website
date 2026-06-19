@@ -21,7 +21,7 @@ export default function Reveal({
       transition={{
         duration: 0.65,
         delay: delay / 1000,
-        ease: [0.16, 1, 0.3, 1],
+        ease: [0.16, 1, 0.3, 1] as [number, number, number, number],
       }}
     >
       {children}

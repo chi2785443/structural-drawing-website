@@ -7,7 +7,7 @@ const EXEC =
 
 async function main() {
   const browser = await chromium.launch({ executablePath: EXEC });
-  const page = await browser.newPage({ viewportSize: { width: 1440, height: 900 } });
+  const page = await browser.newPage({ viewport: { width: 1440, height: 900 } });
   await page.goto("http://localhost:3789", { waitUntil: "networkidle" });
   await page.waitForTimeout(1500);
 
