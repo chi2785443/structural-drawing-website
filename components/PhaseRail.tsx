@@ -26,7 +26,7 @@ export default function PhaseRail() {
       "(prefers-reduced-motion: reduce)"
     ).matches;
     if (reduceMotion) {
-      setActive(PHASES.length - 1);
+      setTimeout(() => setActive(PHASES.length - 1), 0);
       return;
     }
     const trigger = ScrollTrigger.create({
