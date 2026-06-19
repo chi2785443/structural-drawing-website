@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import Reveal from "@/components/Reveal";
 
 export default function Contact() {
@@ -21,28 +24,35 @@ export default function Contact() {
         </Reveal>
         <Reveal delay={240}>
           <div className="mt-10 flex flex-wrap items-center gap-6">
-            <a
+            <motion.a
               href="mailto:chineduaguwa0@gmail.com"
-              className="rounded-xl bg-accent px-6 py-3 font-medium text-black transition-transform hover:-translate-y-0.5 active:scale-[0.98]"
+              className="rounded-xl bg-accent px-6 py-3 font-medium text-black"
+              whileHover={{ y: -3, scale: 1.02 }}
+              whileTap={{ scale: 0.97 }}
+              transition={{ type: "spring", stiffness: 400, damping: 20 }}
             >
               Email me
-            </a>
-            <a
+            </motion.a>
+            <motion.a
               href="https://linkedin.com/in/chinedu-aguwa"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              className="text-muted underline-offset-4"
+              whileHover={{ color: "var(--color-foreground)", textDecoration: "underline" }}
+              transition={{ duration: 0.15 }}
             >
               LinkedIn ↗
-            </a>
-            <a
+            </motion.a>
+            <motion.a
               href="https://github.com/chi2785443"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-muted underline-offset-4 transition-colors hover:text-foreground hover:underline"
+              className="text-muted underline-offset-4"
+              whileHover={{ color: "var(--color-foreground)", textDecoration: "underline" }}
+              transition={{ duration: 0.15 }}
             >
               GitHub ↗
-            </a>
+            </motion.a>
           </div>
         </Reveal>
 

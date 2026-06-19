@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import Reveal from "@/components/Reveal";
 
 const groups = [
@@ -69,16 +72,21 @@ export default function Skills() {
       <div className="mt-12 grid max-w-4xl gap-8 border-t border-line pt-10 sm:grid-cols-2 lg:grid-cols-4">
         {groups.map((group, i) => (
           <Reveal key={group.name} delay={i * 80}>
-            <h3 className="font-semibold text-sm text-foreground">{group.name}</h3>
-            <p className="mt-1.5 text-xs leading-relaxed text-muted">{group.summary}</p>
-            <ul className="mt-4 space-y-1.5 border-t border-line pt-4 text-sm text-muted">
-              {group.items.map((item) => (
-                <li key={item} className="flex items-center gap-2">
-                  <span className="text-accent text-[10px]">▸</span>
-                  {item}
-                </li>
-              ))}
-            </ul>
+            <motion.div
+              whileHover={{ y: -4 }}
+              transition={{ type: "spring", stiffness: 340, damping: 24 }}
+            >
+              <h3 className="font-semibold text-sm text-foreground">{group.name}</h3>
+              <p className="mt-1.5 text-xs leading-relaxed text-muted">{group.summary}</p>
+              <ul className="mt-4 space-y-1.5 border-t border-line pt-4 text-sm text-muted">
+                {group.items.map((item) => (
+                  <li key={item} className="flex items-center gap-2">
+                    <span className="text-accent text-[10px]">▸</span>
+                    {item}
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
           </Reveal>
         ))}
       </div>
