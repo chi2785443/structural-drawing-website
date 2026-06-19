@@ -170,7 +170,7 @@ export default function Nav({ isDarkMode, onToggleDarkMode }: NavProps) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }}
             className="overflow-hidden border-t border-line bg-black/95 backdrop-blur-md sm:hidden"
           >
             <ul className="flex flex-col px-6 py-4 gap-4 font-mono text-sm text-muted">
