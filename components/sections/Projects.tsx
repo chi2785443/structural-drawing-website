@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { motion } from "framer-motion";
 import Reveal from "@/components/Reveal";
 import { PROJECTS, type Project } from "@/lib/projects-data";
 
@@ -25,13 +28,14 @@ function ArrowIcon() {
 function ProjectCard({ project, index }: { project: Project; index: number }) {
   return (
     <Reveal delay={index * 60}>
-      <article className="
-        group relative flex flex-col overflow-hidden rounded-2xl
-        border border-line bg-black/40 backdrop-blur-md
-        transition-all duration-500 ease-out
-        hover:border-accent/50
-        hover:shadow-[0_8px_48px_rgba(255,102,0,0.12)]
-      ">
+      <motion.article
+        className="
+          group relative flex flex-col overflow-hidden rounded-2xl
+          border border-line bg-black/40 backdrop-blur-md
+        "
+        whileHover={{ y: -6, boxShadow: "0 16px 48px rgba(255,102,0,0.14)", borderColor: "rgba(255,102,0,0.4)" }}
+        transition={{ type: "spring", stiffness: 300, damping: 22 }}
+      >
         {/* ── image + hover reveal ──────────────────────────────── */}
         <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
 
@@ -106,7 +110,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
             PDF
           </a>
         </div>
-      </article>
+      </motion.article>
     </Reveal>
   );
 }

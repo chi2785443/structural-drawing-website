@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 
 const LINKS = [
   { label: "Projects", href: "#projects" },
@@ -162,44 +163,63 @@ export default function Nav({ isDarkMode, onToggleDarkMode }: NavProps) {
       </nav>
 
       {/* Mobile dropdown */}
-      {menuOpen && (
-        <div className="border-t border-line bg-black/95 backdrop-blur-md sm:hidden">
-          <ul className="flex flex-col px-6 py-4 gap-4 font-mono text-sm text-muted">
-            {LINKS.map(({ label, href }) => {
-              const sectionId = href.replace("#", "");
-              const isActive = activeSection === sectionId;
-              return (
-                <li key={label}>
-                  <a
-                    href={href}
-                    onClick={closeMenu}
-                    className={`flex items-center gap-2 transition-colors duration-150 hover:text-foreground ${
-                      isActive ? "text-foreground" : ""
-                    }`}
+      <AnimatePresence>
+        {menuOpen && (
+          <motion.div
+            key="mobile-menu"
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+            className="overflow-hidden border-t border-line bg-black/95 backdrop-blur-md sm:hidden"
+          >
+            <ul className="flex flex-col px-6 py-4 gap-4 font-mono text-sm text-muted">
+              {LINKS.map(({ label, href }, i) => {
+                const sectionId = href.replace("#", "");
+                const isActive = activeSection === sectionId;
+                return (
+                  <motion.li
+                    key={label}
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: i * 0.06, duration: 0.25, ease: "easeOut" }}
                   >
-                    {isActive && <span className="w-1 h-1 rounded-full bg-[#ff6600] inline-block" />}
-                    {label}
-                  </a>
-                </li>
-              );
-            })}
-            <li>
-              <button
-                onClick={() => { onToggleDarkMode(); closeMenu(); }}
-                className="flex items-center gap-2 transition-colors duration-150 hover:text-foreground"
+                    <a
+                      href={href}
+                      onClick={closeMenu}
+                      className={`flex items-center gap-2 transition-colors duration-150 hover:text-foreground ${
+                        isActive ? "text-foreground" : ""
+                      }`}
+                    >
+                      {isActive && <span className="w-1 h-1 rounded-full bg-[#ff6600] inline-block" />}
+                      {label}
+                    </a>
+                  </motion.li>
+                );
+              })}
+              <motion.li
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: LINKS.length * 0.06, duration: 0.25, ease: "easeOut" }}
               >
-                <span className="w-1 h-1 rounded-full bg-[#ff6600] inline-block" />
-                {isDarkMode ? "Day Scene" : "Night Scene"}
-              </button>
-            </li>
-          </ul>
-        </div>
-      )}
+                <button
+                  onClick={() => { onToggleDarkMode(); closeMenu(); }}
+                  className="flex items-center gap-2 transition-colors duration-150 hover:text-foreground"
+                >
+                  <span className="w-1 h-1 rounded-full bg-[#ff6600] inline-block" />
+                  {isDarkMode ? "Day Scene" : "Night Scene"}
+                </button>
+              </motion.li>
+            </ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Scroll progress bar */}
-      <div
-        className="absolute bottom-0 left-0 h-px bg-[#ff6600] opacity-60 transition-[width] duration-75"
+      <motion.div
+        className="absolute bottom-0 left-0 h-px bg-[#ff6600] opacity-60"
         style={{ width: `${scrollProgress}%` }}
+        transition={{ duration: 0.05 }}
       />
     </header>
   );
