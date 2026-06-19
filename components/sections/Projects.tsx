@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import Reveal from "@/components/Reveal";
 import { PROJECTS, type Project } from "@/lib/projects-data";
 
@@ -35,12 +36,13 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
         <div className="relative overflow-hidden" style={{ aspectRatio: "4/3" }}>
 
           {/* cover photo */}
-          <img
+          <Image
             src={project.coverImage}
             alt={project.name}
-            loading="lazy"
+            fill
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
             className="
-              absolute inset-0 h-full w-full object-cover
+              object-cover
               transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]
               group-hover:scale-[1.07]
             "
