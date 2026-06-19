@@ -16,41 +16,42 @@ const PHASES = [
   "Topped out",
 ];
 
-// Staff geometry — 2 bands per phase = 12 bands total
-const BAND_H  = 34;   // px per alternating band
-const STAFF_W = 30;   // px wide
+const BAND_H    = 36;
+const STAFF_W   = 32;
 const NUM_BANDS = PHASES.length * 2; // 12
-const TOTAL_H  = NUM_BANDS * BAND_H; // 408 px
+const TOTAL_H   = NUM_BANDS * BAND_H; // 432 px
 
-// E-pattern: marks at 0%, 33%, 50%, 67% of each band.
-// Full-width at 0% and 50%; ~55% width at 33% and 67%.
+// E-pattern: full-width at 0 % and 50 %; ~55 % at 33 % and 67 %
 const E_MARKS: { frac: number; full: boolean }[] = [
-  { frac: 0,       full: true  },
-  { frac: 1 / 3,   full: false },
-  { frac: 1 / 2,   full: true  },
-  { frac: 2 / 3,   full: false },
+  { frac: 0,     full: true  },
+  { frac: 1 / 3, full: false },
+  { frac: 1 / 2, full: true  },
+  { frac: 2 / 3, full: false },
 ];
 
-function StaffBand({ index }: { index: number }) {
-  const isRed     = index % 2 === 0;
-  const bg        = isRed ? "#ff6600" : "#f0f0f0";
-  const markColor = isRed ? "#f0f0f0" : "#ff6600";
+// Site palette
+const ORANGE      = "#ff6600";
+const ORANGE_DIM  = "rgba(255,102,0,0.55)";
+const ORANGE_FAINT = "rgba(255,102,0,0.18)";
 
-  // Print a number inside each red band (every 1 m of staff height)
-  const mVal    = (NUM_BANDS - index) * 0.5;      // 6.0 … 0.5
-  const showNum = isRed && Number.isInteger(mVal); // whole metres only
+// Band colours — dark obsidian base, subtle warm-orange tint on alternating bands
+const BAND_DARK   = "rgba(10,6,2,0.82)";   // near-black with warm undertone
+const BAND_TINT   = "rgba(255,90,0,0.12)"; // barely-there orange wash
+
+// E-mark colours — crisp orange on dark, slightly darker orange on tint
+const MARK_ON_DARK = "rgba(255,102,0,0.88)";
+const MARK_ON_TINT = "rgba(255,102,0,0.5)";
+
+function StaffBand({ index }: { index: number }) {
+  const isDark    = index % 2 === 0;
+  const bg        = isDark ? BAND_DARK : BAND_TINT;
+  const markColor = isDark ? MARK_ON_DARK : MARK_ON_TINT;
+
+  const mVal    = (NUM_BANDS - index) * 0.5;
+  const showNum = isDark && Number.isInteger(mVal);
 
   return (
-    <div
-      style={{
-        position: "relative",
-        width: STAFF_W,
-        height: BAND_H,
-        backgroundColor: bg,
-        flexShrink: 0,
-      }}
-    >
-      {/* E-pattern horizontal bars */}
+    <div style={{ position: "relative", width: STAFF_W, height: BAND_H, backgroundColor: bg, flexShrink: 0 }}>
       {E_MARKS.map(({ frac, full }, j) => (
         <div
           key={j}
@@ -59,28 +60,25 @@ function StaffBand({ index }: { index: number }) {
             top: Math.round(frac * BAND_H) - 1,
             left: 0,
             width: full ? STAFF_W : Math.round(STAFF_W * 0.52),
-            height: 2,
+            height: full ? 2 : 1,
             backgroundColor: markColor,
           }}
         />
       ))}
 
-      {/* Metre number — right side of band, contrasting colour */}
       {showNum && (
-        <div
-          style={{
-            position: "absolute",
-            right: 4,
-            top: "50%",
-            transform: "translateY(-50%)",
-            fontFamily: "monospace",
-            fontWeight: 800,
-            fontSize: 9,
-            lineHeight: 1,
-            color: markColor,
-            userSelect: "none",
-          }}
-        >
+        <div style={{
+          position: "absolute",
+          right: 3,
+          top: "50%",
+          transform: "translateY(-50%)",
+          fontFamily: "monospace",
+          fontWeight: 700,
+          fontSize: 11,
+          lineHeight: 1,
+          color: ORANGE_DIM,
+          userSelect: "none",
+        }}>
           {mVal.toFixed(0)}
         </div>
       )}
@@ -105,17 +103,16 @@ export default function PhaseRail() {
   }, []);
 
   const activePhase  = Math.min(PHASES.length - 1, Math.floor(progress * PHASES.length));
-  // Indicator climbs from bottom to top as building rises
   const indicatorTop = TOTAL_H * (1 - progress);
   const labelTop     = Math.max(0, Math.min(TOTAL_H - 32, indicatorTop - 14));
-  const readingM     = (progress * (NUM_BANDS * 0.5)).toFixed(2);
+  const readingM     = (progress * NUM_BANDS * 0.5).toFixed(2);
 
   return (
-    <div className="fixed right-6 top-1/2 z-20 hidden -translate-y-1/2 select-none lg:block">
+    <div className="fixed right-10 top-1/2 z-20 hidden -translate-y-1/2 select-none lg:block">
       <div style={{ display: "flex", alignItems: "flex-start" }}>
 
-        {/* Phase label — floats at crosshair level */}
-        <div style={{ position: "relative", width: 92, height: TOTAL_H }}>
+        {/* Floating phase label */}
+        <div style={{ position: "relative", width: 100, height: TOTAL_H }}>
           <motion.div
             style={{ position: "absolute", right: 10, textAlign: "right" }}
             animate={{ top: labelTop }}
@@ -123,18 +120,19 @@ export default function PhaseRail() {
           >
             <div style={{
               fontFamily: "monospace",
-              fontSize: 10,
+              fontSize: 12,
               fontWeight: 600,
-              color: "#f97316",
+              color: ORANGE,
               whiteSpace: "nowrap",
               lineHeight: 1.4,
+              textShadow: "0 0 12px rgba(255,102,0,0.5)",
             }}>
               {PHASES[activePhase]}
             </div>
             <div style={{
               fontFamily: "monospace",
-              fontSize: 8,
-              color: "#8a7a6a",
+              fontSize: 10,
+              color: ORANGE_DIM,
               lineHeight: 1,
             }}>
               {readingM} m
@@ -142,68 +140,49 @@ export default function PhaseRail() {
           </motion.div>
         </div>
 
-        {/* ── Staff body ── */}
+        {/* Staff body */}
         <div style={{ position: "relative" }}>
-          <div
-            style={{
-              display: "flex",
-              flexDirection: "column",
-              width: STAFF_W,
-              border: "2px solid #333",
-              borderRadius: 2,
-              overflow: "hidden",
-              boxShadow:
-                "2px 3px 14px rgba(0,0,0,0.6), inset -2px 0 4px rgba(0,0,0,0.18)",
-            }}
-          >
+          <div style={{
+            display: "flex",
+            flexDirection: "column",
+            width: STAFF_W,
+            border: `1px solid ${ORANGE_FAINT}`,
+            borderRadius: 3,
+            overflow: "hidden",
+            boxShadow: `0 0 0 1px rgba(255,102,0,0.08), 0 4px 24px rgba(0,0,0,0.5)`,
+            backdropFilter: "blur(6px)",
+          }}>
             {Array.from({ length: NUM_BANDS }).map((_, i) => (
               <StaffBand key={i} index={i} />
             ))}
           </div>
 
-          {/* ── Telescope crosshair ── */}
+          {/* Crosshair — in site orange, not yellow */}
           <motion.div
-            style={{
-              position: "absolute",
-              left: -11,
-              right: -11,
-              pointerEvents: "none",
-              zIndex: 10,
-            }}
+            style={{ position: "absolute", left: -10, right: -10, pointerEvents: "none", zIndex: 10 }}
             animate={{ top: indicatorTop }}
             transition={{ type: "spring", stiffness: 240, damping: 28 }}
           >
-            {/* Upper stadia hair */}
+            {/* Stadia above */}
             <div style={{
-              position: "absolute",
-              left: 11, right: 11,
-              top: -8,
-              height: 1,
-              backgroundColor: "rgba(255,224,0,0.5)",
+              position: "absolute", left: 10, right: 10, top: -7, height: 1,
+              backgroundColor: ORANGE_FAINT,
             }} />
-
-            {/* Main crosshair line */}
+            {/* Main hair */}
             <div style={{
-              position: "absolute",
-              left: 0, right: 0,
-              top: -1,
-              height: 2,
-              backgroundColor: "#ffe000",
-              boxShadow: "0 0 7px 2px rgba(255,224,0,0.45)",
+              position: "absolute", left: 0, right: 0, top: -1, height: 2,
+              backgroundColor: ORANGE,
+              boxShadow: `0 0 8px 2px rgba(255,102,0,0.4)`,
             }} />
-
-            {/* Lower stadia hair */}
+            {/* Stadia below */}
             <div style={{
-              position: "absolute",
-              left: 11, right: 11,
-              top: 7,
-              height: 1,
-              backgroundColor: "rgba(255,224,0,0.5)",
+              position: "absolute", left: 10, right: 10, top: 6, height: 1,
+              backgroundColor: ORANGE_FAINT,
             }} />
           </motion.div>
         </div>
 
-        {/* ── Graduation ticks on right ── */}
+        {/* Graduation ticks */}
         <div style={{ position: "relative", marginLeft: 4, height: TOTAL_H }}>
           {Array.from({ length: NUM_BANDS + 1 }).map((_, i) => {
             const isMajor = (NUM_BANDS - i) % 2 === 0;
@@ -222,13 +201,13 @@ export default function PhaseRail() {
                 <div style={{
                   width: isMajor ? 8 : 4,
                   height: isMajor ? 2 : 1,
-                  backgroundColor: isMajor ? "#777" : "#444",
+                  backgroundColor: isMajor ? ORANGE_DIM : ORANGE_FAINT,
                 }} />
                 {isMajor && (
                   <div style={{
                     fontFamily: "monospace",
-                    fontSize: 8,
-                    color: "#666",
+                    fontSize: 10,
+                    color: ORANGE_DIM,
                     lineHeight: 1,
                   }}>
                     {((NUM_BANDS - i) * 0.5).toFixed(1)}
